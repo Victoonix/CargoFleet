@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Evento.cs" />
+    <Compile Include="Loot.cs" />
     <Compile Include="Mortes.cs" />
     <Compile Include="Precos.cs" />
     <Compile Include="Program.cs" />

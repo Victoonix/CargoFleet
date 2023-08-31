@@ -25,7 +25,7 @@ namespace Cargo_Fleet
                 else if (guardas == 1)
                 {
                     Console.WriteLine("\n> Eles se deparam com o seu guarda.");
-                    if (rand.Next(2) == 0)
+                    if (rand.NextDouble() < 0.4)
                     {
                         Console.WriteLine("\n> O seu único guarda impressionantemente trata de todos os piratas.");
                         Console.ReadKey();
@@ -48,7 +48,7 @@ namespace Cargo_Fleet
                         Console.ReadKey();
                         return true;
                     }
-                    else if (rand.Next(1) == 0)
+                    else if (rand.NextDouble() < 0.5)
                     {
                         Console.WriteLine("\n> O seus guardas têm uma luta difícil.");
                         Console.ReadKey();
@@ -59,7 +59,7 @@ namespace Cargo_Fleet
                         game.guardas -= 1;
                         return true;
                     }
-                    else if (rand.Next(1) == 0)
+                    else if (rand.NextDouble() < 0.5)
                     {
                         Console.WriteLine("\n> Eles são pegos de surpresa pelos piratas.");
                         Console.ReadKey();
@@ -71,11 +71,28 @@ namespace Cargo_Fleet
                     }
                     Console.ReadKey();
                 }
-                if (rand.Next(1) == 0)
+                else if (guardas >= 3)
+                {
+                    Console.WriteLine("Os piratas não esperavam ver tantos guardas à bordo.");
+                    if (rand.NextDouble() < 0.90)
+                    {
+                        Console.WriteLine("\n> Os piratas inevitavelmente perdem a luta contra os seus guardas.");
+                        Console.ReadKey();
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\n> Você venceu, e apesar de ter uma luta fácil, um dos seus guardas leva um tiro de surpresa e acaba morrendo na batalha.");
+                        Console.ReadKey();
+                        game.guardas -= 1;
+                        return true;
+                    }
+                }
+                if (rand.NextDouble() < 0.5)
                 {
                     Console.WriteLine("\n> Você se esconde, arma em mãos, na curva de um corredor.");
                     Console.ReadKey();
-                    if (rand.Next(4) == 0)
+                    if (rand.NextDouble() < 0.1)
                     {
                         Console.WriteLine("\n> Eles chegam na curva, e você atira muito rápido e precisamente, milagrosamente conseguindo vencer de todos os piratas");
                         Console.ReadKey();
@@ -91,7 +108,7 @@ namespace Cargo_Fleet
                 {
                     Console.WriteLine("\n> Você tranca a sua porta, ganhando um pouco de tempo.");
                     Console.ReadKey();
-                    if (rand.Next(3) == 0)
+                    if (rand.NextDouble() < 0.25)
                     {
                         Console.WriteLine("\n> A porta te dá tempo para preparar. Com uma agilidade milagrosa, você atira em todos os piratas logo depois deles perfurarem a porta.");
                         Console.ReadKey();
