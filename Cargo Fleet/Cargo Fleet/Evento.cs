@@ -73,7 +73,8 @@ namespace Cargo_Fleet
                 }
                 else if (guardas >= 3)
                 {
-                    Console.WriteLine("Os piratas não esperavam ver tantos guardas à bordo.");
+                    Console.WriteLine("\n> Os piratas não esperavam ver tantos guardas à bordo.");
+                    Console.ReadKey();
                     if (rand.NextDouble() < 0.90)
                     {
                         Console.WriteLine("\n> Os piratas inevitavelmente perdem a luta contra os seus guardas.");

@@ -25,14 +25,14 @@ namespace Cargo_Fleet
         public int ouro = 0;
         public int oxigenio = 20;
         public int motor = 0;
+        public double dinheiro = 400;
         static void Main(string[] args)
         {
             Maximize();
             double preco_ouro = 70;
             double preco_motor = 300;
             double preco_titanio = 20;
-            double preco_oxigenio = 10;
-            double dinheiro = 400;
+            double preco_oxigenio = 10;            
             string tipo = "E";
 
             string hist_ouro = "";
@@ -40,10 +40,13 @@ namespace Cargo_Fleet
             string hist_titanio = "";
             string hist_oxigenio = "";
 
+            bool servicoOxigenio = false;
+
             bool vivo = true;
 
             string S_N = "";
             int quantidade = 0;
+            int consumoOxigenio;
 
             string event_result;
 
@@ -99,7 +102,7 @@ namespace Cargo_Fleet
                 Console.WriteLine("|          E - Esperar            |_/");
                 Console.WriteLine("|                                 |");
                 Console.WriteLine("|_________________________________|");
-                Console.WriteLine("|Seu dinheiro: E$" + Math.Round(dinheiro, 2));
+                Console.WriteLine("|Seu dinheiro: E$" + Math.Round(game.dinheiro, 2));
                 Console.WriteLine("|_____________________/\n");
                 tipo = Console.ReadLine().ToUpper();
                 Console.Clear();
@@ -118,15 +121,37 @@ namespace Cargo_Fleet
                     preco_motor = preco.Motor(preco_motor);
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("\n|||-- Custo de vida: -E$6 --|||");
-                    dinheiro -= 6;
-                    Console.WriteLine("|||-- Oxigênio: -1 --|||");
-                    game.oxigenio -= 1;
+                    game.dinheiro -= 6;
                     if (game.guardas > 0)
                     {
-                        Console.WriteLine("|||-- Salário do guarda: -E$2 --|||");
-                        dinheiro -= 2;
-                        Console.WriteLine($"|||-- Oxigênio do guarda: -{1 * game.guardas} --||");
-                        game.oxigenio -= 1;
+                        Console.WriteLine($"|||-- Salário do{(game.guardas > 1 ? "s" : "")} guarda{(game.guardas > 1 ? "s" : "")}: -E${2 * game.guardas} --|||");
+                        game.dinheiro -= 2;
+                    }
+                    if (servicoOxigenio == false)
+                    {
+                        Console.WriteLine("|||-- Oxigênio: -1 --|||");
+                        if (game.guardas > 0)
+                        {
+                            Console.WriteLine($"|||-- Oxigênio do{(game.guardas > 1 ? "s" : "")} guarda{(game.guardas > 1 ? "s" : "")}: -{1 * game.guardas} --||");
+                        }
+                    }
+                    game.oxigenio -= 1;
+                    game.oxigenio -= game.guardas;
+                    if (servicoOxigenio == true)
+                    {
+                        consumoOxigenio = 1 + game.guardas;
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        if (consumoOxigenio <= 3)
+                        {
+                            Console.WriteLine($"|||-- Serviço de oxigênio: +{consumoOxigenio} --|||");
+                            game.oxigenio += consumoOxigenio;
+                        }
+                        else
+                        {
+                            Console.WriteLine("|||-- Serviço de oxigênio: +3 --|||");
+                            game.oxigenio += 3;
+                        }
+
                     }
                     Console.ForegroundColor = ConsoleColor.White;
                     event_result = "";
@@ -208,10 +233,12 @@ namespace Cargo_Fleet
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("\n=== CONTRATAR ===\n");
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Guarda [G] (Possui: " + game.guardas + ") Salário: E$2/h");
+                    Console.WriteLine("Guarda [G] (Possui: " + game.guardas + ") Preço do transporte: E$30 | Salário: E$2/h");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("Serviço de fornecimento de oxigênio [SO] (Não assinado) Preço: E$20/h");
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine("Voltar: V");
-                    Console.WriteLine("\n[Saldo: E$" + Math.Round(dinheiro, 2) + "]");
+                    Console.WriteLine("\n[Saldo: E$" + Math.Round(game.dinheiro, 2) + "]");
                     Console.WriteLine("Insira o tipo de recurso: (consulte acima)");
                     tipo = Console.ReadLine().ToUpper();
                     if (tipo == "T" || tipo == "AU" || tipo == "O" || tipo == "M" || tipo == "G")
@@ -220,11 +247,11 @@ namespace Cargo_Fleet
                         quantidade = int.Parse(Console.ReadLine());
                         switch (tipo)
                         {
-                            case "T": Console.WriteLine("Isso vai custar E$" + Math.Round(preco_titanio * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(dinheiro, 2) + "]"); break;
-                            case "AU": Console.WriteLine("Isso vai custar E$" + Math.Round(preco_ouro * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(dinheiro, 2) + "]"); break;
-                            case "O": Console.WriteLine("Isso vai custar E$" + Math.Round(preco_oxigenio * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(dinheiro, 2) + "]"); break;
-                            case "M": Console.WriteLine("Isso vai custar E$" + Math.Round(preco_motor * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(dinheiro, 2) + "]"); break;
-                            case "G": Console.WriteLine("Isso vai custar E$" + 2 * quantidade + " por hora. Tem certeza? (S/N) [Saldo: E$" + Math.Round(dinheiro, 2) + "]"); break;
+                            case "T": Console.WriteLine("Isso vai custar E$" + Math.Round(preco_titanio * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(game.dinheiro, 2) + "]"); break;
+                            case "AU": Console.WriteLine("Isso vai custar E$" + Math.Round(preco_ouro * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(game.dinheiro, 2) + "]"); break;
+                            case "O": Console.WriteLine("Isso vai custar E$" + Math.Round(preco_oxigenio * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(game.dinheiro, 2) + "]"); break;
+                            case "M": Console.WriteLine("Isso vai custar E$" + Math.Round(preco_motor * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(game.dinheiro, 2) + "]"); break;
+                            case "G": Console.WriteLine("Isso vai custar E$" + 30 * quantidade + ", mais E$" + 2 * quantidade + " de salário por hora. Tem certeza? (S/N) [Saldo: E$" + Math.Round(game.dinheiro, 2) + "]"); break;
                         }
                         S_N = Console.ReadLine().ToUpper();
                         Console.Clear();
@@ -233,19 +260,19 @@ namespace Cargo_Fleet
                             switch (tipo)
                             {
                                 case "T":
-                                    game.titanio += quantidade; dinheiro -= preco_titanio * quantidade;
+                                    game.titanio += quantidade; game.dinheiro -= preco_titanio * quantidade;
                                     Console.WriteLine("]] -E$" + Math.Round(preco_titanio * quantidade, 2) + " [[  (+" + quantidade + " Titânio)"); break;
                                 case "AU":
-                                    game.ouro += quantidade; dinheiro -= preco_ouro * quantidade;
+                                    game.ouro += quantidade; game.dinheiro -= preco_ouro * quantidade;
                                     Console.WriteLine("]] -E$" + Math.Round(preco_ouro * quantidade, 2) + " [[  (+" + quantidade + " Ouro)"); break;
                                 case "O":
-                                    game.oxigenio += quantidade; dinheiro -= preco_oxigenio * quantidade;
+                                    game.oxigenio += quantidade; game.dinheiro -= preco_oxigenio * quantidade;
                                     Console.WriteLine("]] -E$" + Math.Round(preco_oxigenio * quantidade, 2) + " [[  (+" + quantidade + " Oxigênio)"); break;
                                 case "M":
-                                    game.motor += quantidade; dinheiro -= preco_motor * quantidade;
+                                    game.motor += quantidade; game.dinheiro -= preco_motor * quantidade;
                                     Console.WriteLine("]] -E$" + Math.Round(preco_motor * quantidade, 2) + " [[  (+" + quantidade + " Motor de dobra)"); break;
                                 case "G":
-                                    game.guardas += quantidade;
+                                    game.guardas += quantidade; game.dinheiro -= 30 * quantidade;
                                     Console.WriteLine("]] +1 guarda [["); break;
                             }
                         }
@@ -268,7 +295,7 @@ namespace Cargo_Fleet
                     Console.WriteLine("Motor de dobra [M] (Possui: " + game.motor + ") Preço: E$" + Math.Round(preco_motor, 2));
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine("Voltar: V");
-                    Console.WriteLine("\n[Saldo: E$" + Math.Round(dinheiro, 2) + "]");
+                    Console.WriteLine("\n[Saldo: E$" + Math.Round(game.dinheiro, 2) + "]");
                     Console.WriteLine("Insira o tipo de recurso: (consulte acima)");
                     tipo = Console.ReadLine().ToUpper();
                     if (tipo == "T" || tipo == "AU" || tipo == "O" || tipo == "M")
@@ -277,10 +304,10 @@ namespace Cargo_Fleet
                         quantidade = int.Parse(Console.ReadLine());
                         switch (tipo)
                         {
-                            case "T": if (game.titanio <= 0) { Console.WriteLine("Você não tem titânio (Enter)"); } else { if (quantidade > game.titanio) { quantidade = game.titanio; } Console.WriteLine("Você vai vender " + quantidade + " de titânio e receber " + Math.Round(preco_titanio * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(dinheiro, 2) + "]"); } break;
-                            case "AU": if (game.ouro <= 0) { Console.WriteLine("Você não tem ouro (Enter)"); } else { if (quantidade > game.ouro) { quantidade = game.ouro; } Console.WriteLine("Você vai vender " + quantidade + " de ouro e receber " + Math.Round(preco_ouro * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(dinheiro, 2) + "]"); } break;
-                            case "O": if (game.oxigenio <= 0) { Console.WriteLine("Você não tem oxigênio (Enter)"); } else { if (quantidade > game.oxigenio) { quantidade = game.oxigenio; } Console.WriteLine("Você vai vender " + quantidade + " de oxigênio e receber " + Math.Round(preco_oxigenio * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(dinheiro, 2) + "]"); } break;
-                            case "M": if (game.motor <= 0) { Console.WriteLine("Você não tem motores de dobra (Enter)"); } else { if (quantidade > game.motor) { quantidade = game.motor; } Console.WriteLine("Você vai vender " + quantidade + " motor(es) de dobra e receber " + Math.Round(preco_motor * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(dinheiro, 2) + "]"); } break;
+                            case "T": if (game.titanio <= 0) { Console.WriteLine("Você não tem titânio (Enter)"); } else { if (quantidade > game.titanio) { quantidade = game.titanio; } Console.WriteLine("Você vai vender " + quantidade + " de titânio e receber " + Math.Round(preco_titanio * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(game.dinheiro, 2) + "]"); } break;
+                            case "AU": if (game.ouro <= 0) { Console.WriteLine("Você não tem ouro (Enter)"); } else { if (quantidade > game.ouro) { quantidade = game.ouro; } Console.WriteLine("Você vai vender " + quantidade + " de ouro e receber " + Math.Round(preco_ouro * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(game.dinheiro, 2) + "]"); } break;
+                            case "O": if (game.oxigenio <= 0) { Console.WriteLine("Você não tem oxigênio (Enter)"); } else { if (quantidade > game.oxigenio) { quantidade = game.oxigenio; } Console.WriteLine("Você vai vender " + quantidade + " de oxigênio e receber " + Math.Round(preco_oxigenio * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(game.dinheiro, 2) + "]"); } break;
+                            case "M": if (game.motor <= 0) { Console.WriteLine("Você não tem motores de dobra (Enter)"); } else { if (quantidade > game.motor) { quantidade = game.motor; } Console.WriteLine("Você vai vender " + quantidade + " motor(es) de dobra e receber " + Math.Round(preco_motor * quantidade, 2) + ". Tem certeza? (S/N) [Saldo: E$" + Math.Round(game.dinheiro, 2) + "]"); } break;
                         }
                         S_N = Console.ReadLine().ToUpper();
                         Console.Clear();
@@ -289,16 +316,16 @@ namespace Cargo_Fleet
                             switch (tipo)
                             {
                                 case "T":
-                                    game.titanio -= quantidade; dinheiro += preco_titanio * quantidade;
+                                    game.titanio -= quantidade; game.dinheiro += preco_titanio * quantidade;
                                     Console.WriteLine("]] +E$" + Math.Round(preco_titanio * quantidade, 2) + " [[  (-" + quantidade + " Titânio)"); break;
                                 case "AU":
-                                    game.ouro -= quantidade; dinheiro += preco_ouro * quantidade;
+                                    game.ouro -= quantidade; game.dinheiro += preco_ouro * quantidade;
                                     Console.WriteLine("]] +E$" + Math.Round(preco_ouro * quantidade, 2) + " [[  (-" + quantidade + " Ouro)"); break;
                                 case "O":
-                                    game.oxigenio -= quantidade; dinheiro += preco_oxigenio * quantidade;
+                                    game.oxigenio -= quantidade; game.dinheiro += preco_oxigenio * quantidade;
                                     Console.WriteLine("]] +E$" + Math.Round(preco_oxigenio * quantidade, 2) + " [[  (-" + quantidade + " Oxigênio)"); break;
                                 case "M":
-                                    game.motor -= quantidade; dinheiro += preco_motor * quantidade;
+                                    game.motor -= quantidade; game.dinheiro += preco_motor * quantidade;
                                     Console.WriteLine("]] +E$" + Math.Round(preco_motor * quantidade, 2) + " [[  (-" + quantidade + " Motor de dobra)"); break;
                             }
                         }
